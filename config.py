@@ -41,7 +41,7 @@ BUTTON_CLICK_SOUND_FILE = "sounds\\button_click.wav"
 BACKGROUND_IMAGE_FILE = None
 BG_COLOR = pygame.Color('white')
 
-SOUND_VOLUME = 1.0
+SOUND_VOLUME = 0.1
 
 PLAYER_COINS = 0
 PLAYER_BOOSTERS = {"x2": 0, "x3": 0, "x10": 0}
