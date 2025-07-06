@@ -11,7 +11,7 @@ class Button:
         self.font = font
         self.sound = sound
         self.color = pygame.Color('gray')
-        self.text_color = pygame.Color('white')
+        self.text_color = pygame.Color('black')
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
@@ -25,6 +25,7 @@ class Button:
     def click(self):
         if config.SOUND_VOLUME <= 0:
             return
+
         if self.sound:
             self.sound.set_volume(config.SOUND_VOLUME)
             self.sound.play()
@@ -35,26 +36,26 @@ class MainMenuScene(Scene):
         self.screen_width, self.screen_height = screen_size
         self.font = pygame.font.SysFont('Arial', 36)
         self.button_click_sound = None
+
         if os.path.exists(config.BUTTON_CLICK_SOUND_FILE):
             self.button_click_sound = pygame.mixer.Sound(config.BUTTON_CLICK_SOUND_FILE)
             self.button_click_sound.set_volume(config.SOUND_VOLUME)
-        # Создаем кнопки: "Начать игру", "Настройки", "Магазин", "Выйти"
+
         self.buttons = []
         button_width = 300
         button_height = 50
         spacing = 20
         start_y = self.screen_height // 3
         center_x = self.screen_width // 2 - button_width // 2
-        # Определяем действия для кнопок
         actions = [self.start_game, self.open_settings, self.open_shop, self.quit_game]
         texts = ["Начать игру", "Настройки", "Магазин", "Выйти"]
+
         for i in range(4):
             btn_rect = (center_x, start_y + i * (button_height + spacing), button_width, button_height)
             btn = Button(btn_rect, texts[i], actions[i], self.font, sound=self.button_click_sound)
             self.buttons.append(btn)
 
     def start_game(self):
-        # Реализация перехода в игровую сессию (пример)
         from scenes.game_session import GameSessionScene
         self.manager.game_session = GameSessionScene(self.manager, (self.screen_width, self.screen_height))
         self.manager.go_to(self.manager.game_session)

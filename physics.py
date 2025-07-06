@@ -3,7 +3,6 @@ import pygame
 
 def simulate_physics(balls, gravity, friction, basket, dt=1, iterations=6, additional_radius=15, merge_sound=None, collision_sound=None):
     total_merged = 0
-    # Интегрирование движения (Эйлер)
     for ball in balls:
         ball.velocity[1] += gravity * dt
         ball.position[0] += ball.velocity[0] * dt
@@ -11,7 +10,6 @@ def simulate_physics(balls, gravity, friction, basket, dt=1, iterations=6, addit
         ball.velocity[0] *= friction
         ball.velocity[1] *= friction
 
-    # Итерационный цикл для столкновений и корректировки
     for _ in range(iterations):
         merge_list = []
         merged_indices = set()
@@ -29,7 +27,6 @@ def simulate_physics(balls, gravity, friction, basket, dt=1, iterations=6, addit
                     continue
                 overlap = b1.radius + b2.radius - distance
                 if overlap > 0:
-                    # Если радиусы равны, выполняем слияние
                     if b1.radius == b2.radius:
                         new_radius = b1.radius + additional_radius
                         avg_x = (b1.position[0] + b2.position[0]) / 2
@@ -70,35 +67,38 @@ def simulate_physics(balls, gravity, friction, basket, dt=1, iterations=6, addit
             new_balls.extend(merge_list)
             balls = new_balls
 
-        # Ограничение шариков по коллайдерам бакета (используем прямоугольники)
         if basket is not None:
             for ball in balls:
                 resolve_circle_rect(ball, basket.left_boundary)
                 resolve_circle_rect(ball, basket.right_boundary)
                 resolve_circle_rect(ball, basket.bottom_boundary)
+
     return balls, total_merged
 
 def resolve_collisions(balls, additional_radius, merge_sound=None, collision_sound=None):
     return simulate_physics(balls, gravity=0, friction=1, basket=None, dt=0, iterations=1, additional_radius=additional_radius, merge_sound=merge_sound, collision_sound=collision_sound)
 
 def resolve_circle_rect(ball, rect):
-    # Находим ближайшую точку прямоугольника к центру шара
     cx, cy = ball.position
     closest_x = max(rect.left, min(cx, rect.right))
     closest_y = max(rect.top, min(cy, rect.bottom))
     dx = cx - closest_x
     dy = cy - closest_y
     dist = math.hypot(dx, dy)
+
     if dist < ball.radius:
         penetration = ball.radius - dist
+
         if dist != 0:
             nx = dx / dist
             ny = dy / dist
         else:
             nx, ny = 0, -1
+
         ball.position[0] += nx * penetration
         ball.position[1] += ny * penetration
         vel_dot_n = ball.velocity[0] * nx + ball.velocity[1] * ny
+
         if vel_dot_n < 0:
             ball.velocity[0] -= vel_dot_n * nx
             ball.velocity[1] -= vel_dot_n * ny

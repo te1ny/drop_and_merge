@@ -1,6 +1,3 @@
-import sys
-import pygame
-
 class SceneManager:
     def __init__(self, initial_scene):
         self.current_scene = initial_scene
